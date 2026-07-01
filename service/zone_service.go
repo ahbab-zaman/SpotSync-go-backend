@@ -65,6 +65,7 @@ func (s *ZoneService) Create(req dto.CreateZoneRequest) (*dto.ZoneResponse, erro
 		AvailableSpots: zone.TotalCapacity,
 		PricePerHour:   zone.PricePerHour,
 		CreatedAt:      zone.CreatedAt,
+		UpdatedAt:      zone.UpdatedAt,
 	}, nil
 }
 
@@ -121,5 +122,6 @@ func (s *ZoneService) toZoneResponse(zone *models.ParkingZone) dto.ZoneResponse 
 		AvailableSpots: zone.TotalCapacity - int(activeCount),
 		PricePerHour:   zone.PricePerHour,
 		CreatedAt:      zone.CreatedAt,
+		UpdatedAt:      zone.UpdatedAt,
 	}
 }

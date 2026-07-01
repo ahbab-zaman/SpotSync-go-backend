@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"net/http"
 	"os"
 	"time"
 
@@ -54,23 +53,20 @@ func main() {
 	authSvc := service.NewAuthService(userRepo)
 	authHnd := handler.NewAuthHandler(authSvc)
 
+	zoneRepo := repository.NewZoneRepository(db)
+	zoneSvc := service.NewZoneService(zoneRepo)
+	zoneHnd := handler.NewZoneHandler(zoneSvc)
+
 	api := e.Group("/api/v1")
 
 	api.POST("/auth/register", authHnd.Register)
 	api.POST("/auth/login", authHnd.Login)
 
-	api.GET("/protected-test", func(c echo.Context) error {
-		userID := c.Get("userID").(uint)
-		role := c.Get("role").(string)
-		return c.JSON(http.StatusOK, map[string]interface{}{
-			"success": true,
-			"message": "Authenticated",
-			"data": map[string]interface{}{
-				"user_id": userID,
-				"role":    role,
-			},
-		})
-	}, middleware.JWTMiddleware())
+	api.GET("/zones", zoneHnd.GetAll)
+	api.GET("/zones/:id", zoneHnd.GetByID)
+	api.POST("/zones", zoneHnd.Create, middleware.JWTMiddleware(), middleware.RoleMiddleware("admin"))
+	api.PUT("/zones/:id", zoneHnd.Update, middleware.JWTMiddleware(), middleware.RoleMiddleware("admin"))
+	api.DELETE("/zones/:id", zoneHnd.Delete, middleware.JWTMiddleware(), middleware.RoleMiddleware("admin"))
 
 	port := os.Getenv("PORT")
 	if port == "" {

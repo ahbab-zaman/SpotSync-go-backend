@@ -58,6 +58,8 @@ func handleServiceError(c echo.Context, err error) error {
 		return c.JSON(http.StatusBadRequest, errorResponse("Email already registered"))
 	case errors.Is(err, service.ErrInvalidCredentials):
 		return c.JSON(http.StatusUnauthorized, errorResponse("Invalid credentials"))
+	case errors.Is(err, service.ErrZoneNotFound):
+		return c.JSON(http.StatusNotFound, errorResponse("Resource not found"))
 	default:
 		return c.JSON(http.StatusInternalServerError, errorResponse("Internal server error"))
 	}

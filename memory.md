@@ -7,18 +7,20 @@ Last updated: 2026-07-02
 - **Feature 08 — DTOs — Zones**: `dto/zone_dto.go`
 - **Feature 09 — Repository — Zone**: `repository/zone_repository.go`
 - **Feature 10 — Service — Zone**: `service/zone_service.go`
-  - `GetAll` / `GetByID` — compute `available_spots` = `TotalCapacity - activeReservations`
-  - `Create` — returns `AvailableSpots = TotalCapacity`
-  - `Update` — partial update via pointer nil-checks
-  - `Delete` — verifies existence before deleting
-  - `ErrZoneNotFound` sentinel in service package
-- All compile cleanly (`go build ./...`)
+- **Feature 11 — Handler — Zone**: `handler/zone_handler.go`
+  - 5 zone endpoints: GET /zones, GET /zones/:id (public), POST/PUT/DELETE /zones (admin)
+  - `handleServiceError` updated in `auth_handler.go` with `ErrZoneNotFound → 404`
+  - `UpdatedAt` added to `ZoneResponse` dto with `omitempty`
+  - Routes registered in `main.go` with correct middleware chains
+  - `/contract` run: all 5 endpoints verified against api-reference.md, shape notes documented
+- Phase 3 (Parking Zones Module) fully complete
+- Project compiles cleanly (`go build ./...`)
 
 ## Decisions made
 
-- `toZoneResponse` helper in service layer handles available_spots computation centrally
-- `ErrZoneNotFound` sentinel in service package, mapped from `gorm.ErrRecordNotFound`
-- `Create` returns `AvailableSpots = TotalCapacity` (no reservations exist yet for a new zone)
+- `ZoneResponse.UpdatedAt` added with `omitempty` to match POST response spec while keeping GET responses clean
+- `handleServiceError` now handles `ErrZoneNotFound → 404 "Resource not found"`
+- All zone endpoints verified and documented in api-reference.md with shape notes for minor deviations
 
 ## Problems solved
 
@@ -26,21 +28,19 @@ Last updated: 2026-07-02
 
 ## Current state
 
-- Phase 1 (Foundation) complete
-- Phase 2 (Auth Module) complete: Features 04–07 all done
-- Phase 3 (Parking Zones Module): Features 08–10 done, Feature 11 (Handler) remains
+- Phase 1 (Foundation) complete: Features 01–03
+- Phase 2 (Auth Module) complete: Features 04–07
+- Phase 3 (Parking Zones Module) complete: Features 08–11
+- Phase 4 (Reservations Module): Features 12–15 remain
 - Project compiles cleanly
 
 ## Next session starts with
 
-**Feature 11 — Handler — Zone**: `handler/zone_handler.go`
-- `GET /api/v1/zones` — public, return all zones with `available_spots`
-- `GET /api/v1/zones/:id` — public, return single zone
-- `POST /api/v1/zones` — admin only, return 201
-- `PUT /api/v1/zones/:id` — admin only, return 200
-- `DELETE /api/v1/zones/:id` — admin only, return 200
-- Register all routes in `main.go` with correct middleware chains
-- Then run `/contract` to verify against api-reference.md
+**Feature 12 — DTOs — Reservations**: `dto/reservation_dto.go`
+- `CreateReservationRequest` — zone_id (required, gt=0), license_plate (required, max=15)
+- `ReservationResponse` — id, user_id, zone_id, license_plate, status, created_at, updated_at
+- `MyReservationResponse` — id, license_plate, status, zone (nested: id, name, type), created_at
+- `AdminReservationResponse` — full reservation with preloaded user (id, name, email) and zone (id, name, type)
 
 ## Open questions
 

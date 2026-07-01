@@ -142,7 +142,7 @@ Every response — success or error — uses this envelope. No exceptions.
 
 ### GET /api/v1/zones
 
-**Status:** Not implemented  
+**Status:** ✅ Implemented — shape note (see below)  
 **Access:** Public  
 **Middleware:** None
 
@@ -168,11 +168,13 @@ Every response — success or error — uses this envelope. No exceptions.
 
 **Note:** `available_spots` = `total_capacity` − COUNT of `active` reservations for that zone. Always computed dynamically, never stored.
 
+**Shape note:** Response includes `updated_at` field (with `omitempty`) not shown in spec. Extra field, non-breaking.
+
 ---
 
 ### GET /api/v1/zones/:id
 
-**Status:** Not implemented  
+**Status:** ✅ Implemented — shape note (see GET /zones)  
 **Access:** Public  
 **Middleware:** None
 
@@ -194,6 +196,8 @@ Every response — success or error — uses this envelope. No exceptions.
 }
 ```
 
+**Shape note:** Same `updated_at` deviation as GET /zones.
+
 **Error Cases:**
 | Scenario | Status | Message |
 | ------------- | ------ | ------------------- |
@@ -203,7 +207,7 @@ Every response — success or error — uses this envelope. No exceptions.
 
 ### POST /api/v1/zones
 
-**Status:** Not implemented  
+**Status:** ✅ Implemented and verified  
 **Access:** Admin only  
 **Middleware:** `jwt_middleware` → `role_middleware("admin")`
 
@@ -255,7 +259,7 @@ Every response — success or error — uses this envelope. No exceptions.
 
 ### PUT /api/v1/zones/:id
 
-**Status:** Not implemented  
+**Status:** ✅ Implemented — shape note (same as POST)  
 **Access:** Admin only  
 **Middleware:** `jwt_middleware` → `role_middleware("admin")`
 
@@ -267,7 +271,7 @@ Every response — success or error — uses this envelope. No exceptions.
 
 ### DELETE /api/v1/zones/:id
 
-**Status:** Not implemented  
+**Status:** ✅ Implemented — shape note (see below)  
 **Access:** Admin only  
 **Middleware:** `jwt_middleware` → `role_middleware("admin")`
 
@@ -279,6 +283,8 @@ Every response — success or error — uses this envelope. No exceptions.
   "message": "Parking zone deleted successfully"
 }
 ```
+
+**Shape note:** Response includes `"data": null` in addition to the fields shown above (reuses standard `successResponse` envelope). Non-breaking extra field.
 
 ---
 
@@ -435,11 +441,11 @@ After implementing each endpoint, mark it done and confirm the response shape ma
 | ---------------------------------------- | ---- | -------------- |
 | POST /api/v1/auth/register               | [x]  | [x]            |
 | POST /api/v1/auth/login                  | [x]  | [x]            |
-| GET /api/v1/zones                        | [ ]  | [ ]            |
-| GET /api/v1/zones/:id                    | [ ]  | [ ]            |
-| POST /api/v1/zones                       | [ ]  | [ ]            |
-| PUT /api/v1/zones/:id                    | [ ]  | [ ]            |
-| DELETE /api/v1/zones/:id                 | [ ]  | [ ]            |
+| GET /api/v1/zones                        | [x]  | [x]  |
+| GET /api/v1/zones/:id                    | [x]  | [x]  |
+| POST /api/v1/zones                       | [x]  | [x]  |
+| PUT /api/v1/zones/:id                    | [x]  | [x]  |
+| DELETE /api/v1/zones/:id                 | [x]  | [x]  |
 | POST /api/v1/reservations                | [ ]  | [ ]            |
 | GET /api/v1/reservations/my-reservations | [ ]  | [ ]            |
 | DELETE /api/v1/reservations/:id          | [ ]  | [ ]            |
