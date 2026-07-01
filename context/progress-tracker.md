@@ -6,9 +6,9 @@ Update this file after every completed feature. Any AI agent reading this should
 
 ## Current Status
 
-**Phase:** Phase 3 — Parking Zones Module  
-**Last completed:** 11 Handler — Zone — all 5 zone endpoints, correct middleware chains registered, contract verified  
-**Next:** 12 DTOs — Reservations — CreateReservationRequest, ReservationResponse, MyReservationResponse, AdminReservationResponse
+**Phase:** Phase 4 — Reservations Module  
+**Last completed:** 12 DTOs — Reservations — CreateReservationRequest, ReservationResponse, MyReservationResponse, AdminReservationResponse  
+**Next:** 13 Repository — Reservation — CreateWithLock (FOR UPDATE transaction), FindByUserID, FindByID, UpdateStatus, FindAll
 
 ---
 
@@ -36,7 +36,7 @@ Update this file after every completed feature. Any AI agent reading this should
 
 ### Phase 4 — Reservations Module
 
-- [ ] 12 DTOs — Reservations — CreateReservationRequest, ReservationResponse, MyReservationResponse, AdminReservationResponse
+- [x] 12 DTOs — Reservations — CreateReservationRequest, ReservationResponse, MyReservationResponse, AdminReservationResponse
 - [ ] 13 Repository — Reservation — CreateWithLock (FOR UPDATE transaction), FindByUserID, FindByID, UpdateStatus, FindAll
 - [ ] 14 Service — Reservation — Reserve, GetMyReservations, CancelReservation (ownership check), GetAllReservations
 - [ ] 15 Handler — Reservation — all 4 reservation endpoints, correct middleware chains registered
