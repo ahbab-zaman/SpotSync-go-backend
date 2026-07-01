@@ -7,8 +7,8 @@ Update this file after every completed feature. Any AI agent reading this should
 ## Current Status
 
 **Phase:** Phase 4 — Reservations Module  
-**Last completed:** 14 Service — Reservation — Reserve, GetMyReservations, CancelReservation (ownership check), GetAllReservations  
-**Next:** 15 Handler — Reservation — all 4 reservation endpoints, correct middleware chains registered
+**Last completed:** 15 Handler — Reservation — all 4 reservation endpoints, correct middleware chains registered, contract verified  
+**Next:** 16 Deployment — PostgreSQL provisioned, backend deployed, env vars set, live URL confirmed, README.md written
 
 ---
 
@@ -39,7 +39,7 @@ Update this file after every completed feature. Any AI agent reading this should
 - [x] 12 DTOs — Reservations — CreateReservationRequest, ReservationResponse, MyReservationResponse, AdminReservationResponse
 - [x] 13 Repository — Reservation — CreateWithLock (FOR UPDATE transaction), FindByUserID, FindByID, UpdateStatus, FindAll
 - [x] 14 Service — Reservation — Reserve, GetMyReservations, CancelReservation (ownership check), GetAllReservations
-- [ ] 15 Handler — Reservation — all 4 reservation endpoints, correct middleware chains registered
+- [x] 15 Handler — Reservation — all 4 reservation endpoints, correct middleware chains registered
 
 ### Phase 5 — Deployment
 
@@ -62,6 +62,7 @@ Update this file after every completed feature. Any AI agent reading this should
 - Feature 11 `ZoneHandler` added `ErrZoneNotFound → 404 Resource not found` to `handleServiceError` in `auth_handler.go`. `UpdatedAt` added to `ZoneResponse` DTO with `omitempty` to match POST response spec. Contract verification notes: GET responses include extra `updated_at`, DELETE response includes `data: null` — both non-breaking deviations documented in api-reference.md.
 - Feature 13 `ReservationRepository.CreateWithLock` implements the exact transaction pattern from build-plan.md: `clause.Locking{Strength: "UPDATE"}` on the zone row, count active reservations, compare to capacity, return `repository.ErrZoneFull` if full. `ErrZoneFull` defined in repository package to avoid circular dependency (service → repository → service). Service layer maps `repository.ErrZoneFull` → `service.ErrZoneFull` for handler consumption.
 - Feature 14 `ReservationService` depends on both `ReservationRepository` and `ZoneRepository`. Maps `gorm.ErrRecordNotFound` from `CreateWithLock` → `service.ErrZoneNotFound` (zone deleted between check and transaction). Maps `repository.ErrZoneFull` → `service.ErrZoneFull`. `CancelReservation` verifies `reservation.UserID != userID` → `service.ErrForbidden`.
+- Feature 15 `ReservationHandler` implements 4 endpoints. `handleServiceError` extended with `ErrReservationNotFound → 404`, `ErrForbidden → 403`, `ErrZoneFull → 409`. Contract verified all 4 endpoints against api-reference.md. All 11 endpoints now implemented.
 
 ---
 

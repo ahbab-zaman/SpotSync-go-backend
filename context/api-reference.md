@@ -292,7 +292,7 @@ Every response — success or error — uses this envelope. No exceptions.
 
 ### POST /api/v1/reservations
 
-**Status:** Not implemented  
+**Status:** ✅ Implemented and verified  
 **Access:** Authenticated (driver or admin)  
 **Middleware:** `jwt_middleware`
 
@@ -342,7 +342,7 @@ Every response — success or error — uses this envelope. No exceptions.
 
 ### GET /api/v1/reservations/my-reservations
 
-**Status:** Not implemented  
+**Status:** ✅ Implemented and verified  
 **Access:** Authenticated  
 **Middleware:** `jwt_middleware`
 
@@ -374,7 +374,7 @@ Every response — success or error — uses this envelope. No exceptions.
 
 ### DELETE /api/v1/reservations/:id
 
-**Status:** Not implemented  
+**Status:** ✅ Implemented — shape note (see below)  
 **Access:** Authenticated (own reservations only)  
 **Middleware:** `jwt_middleware`
 
@@ -387,6 +387,8 @@ Every response — success or error — uses this envelope. No exceptions.
 }
 ```
 
+**Shape note:** Response includes `"data": null` in addition to the fields shown above (reuses standard `successResponse` envelope). Non-breaking extra field.
+
 **Error Cases:**
 | Scenario | Status | Message |
 | -------------------------------- | ------ | ------------------------------- |
@@ -398,7 +400,7 @@ Every response — success or error — uses this envelope. No exceptions.
 
 ### GET /api/v1/reservations
 
-**Status:** Not implemented  
+**Status:** ✅ Implemented and verified  
 **Access:** Admin only  
 **Middleware:** `jwt_middleware` → `role_middleware("admin")`
 
@@ -446,7 +448,7 @@ After implementing each endpoint, mark it done and confirm the response shape ma
 | POST /api/v1/zones                       | [x]  | [x]  |
 | PUT /api/v1/zones/:id                    | [x]  | [x]  |
 | DELETE /api/v1/zones/:id                 | [x]  | [x]  |
-| POST /api/v1/reservations                | [ ]  | [ ]            |
-| GET /api/v1/reservations/my-reservations | [ ]  | [ ]            |
-| DELETE /api/v1/reservations/:id          | [ ]  | [ ]            |
-| GET /api/v1/reservations                 | [ ]  | [ ]            |
+| POST /api/v1/reservations                | [x]  | [x]  |
+| GET /api/v1/reservations/my-reservations | [x]  | [x]  |
+| DELETE /api/v1/reservations/:id          | [x]  | [x]  |
+| GET /api/v1/reservations                 | [x]  | [x]  |

@@ -57,6 +57,10 @@ func main() {
 	zoneSvc := service.NewZoneService(zoneRepo)
 	zoneHnd := handler.NewZoneHandler(zoneSvc)
 
+	reservationRepo := repository.NewReservationRepository(db)
+	reservationSvc := service.NewReservationService(reservationRepo, zoneRepo)
+	reservationHnd := handler.NewReservationHandler(reservationSvc)
+
 	api := e.Group("/api/v1")
 
 	api.POST("/auth/register", authHnd.Register)
@@ -67,6 +71,11 @@ func main() {
 	api.POST("/zones", zoneHnd.Create, middleware.JWTMiddleware(), middleware.RoleMiddleware("admin"))
 	api.PUT("/zones/:id", zoneHnd.Update, middleware.JWTMiddleware(), middleware.RoleMiddleware("admin"))
 	api.DELETE("/zones/:id", zoneHnd.Delete, middleware.JWTMiddleware(), middleware.RoleMiddleware("admin"))
+
+	api.POST("/reservations", reservationHnd.Create, middleware.JWTMiddleware())
+	api.GET("/reservations/my-reservations", reservationHnd.GetMyReservations, middleware.JWTMiddleware())
+	api.DELETE("/reservations/:id", reservationHnd.Cancel, middleware.JWTMiddleware())
+	api.GET("/reservations", reservationHnd.GetAll, middleware.JWTMiddleware(), middleware.RoleMiddleware("admin"))
 
 	port := os.Getenv("PORT")
 	if port == "" {
