@@ -44,7 +44,7 @@ Every response — success or error — uses this envelope. No exceptions.
 
 ### POST /api/v1/auth/register
 
-**Status:** Not implemented  
+**Status:** ✅ Implemented and verified  
 **Access:** Public  
 **Middleware:** None
 
@@ -94,7 +94,7 @@ Every response — success or error — uses this envelope. No exceptions.
 
 ### POST /api/v1/auth/login
 
-**Status:** Not implemented  
+**Status:** ✅ Implemented and verified  
 **Access:** Public  
 **Middleware:** None
 
@@ -126,6 +126,8 @@ Every response — success or error — uses this envelope. No exceptions.
 ```
 
 **JWT Payload must contain:** `id` (uint), `role` (string)
+
+**Status:** ⚠️ Shape note — Login response `user` object includes `created_at` and `updated_at` (reuses `UserResponse` DTO). Spec omits these fields. Decision recorded in progress-tracker.md. Adjust if frontend expects exact spec.
 
 **Error Cases:**
 | Scenario | Status | Message |
@@ -431,8 +433,8 @@ After implementing each endpoint, mark it done and confirm the response shape ma
 
 | Endpoint                                 | Done | Shape Verified |
 | ---------------------------------------- | ---- | -------------- |
-| POST /api/v1/auth/register               | [ ]  | [ ]            |
-| POST /api/v1/auth/login                  | [ ]  | [ ]            |
+| POST /api/v1/auth/register               | [x]  | [x]            |
+| POST /api/v1/auth/login                  | [x]  | [x]            |
 | GET /api/v1/zones                        | [ ]  | [ ]            |
 | GET /api/v1/zones/:id                    | [ ]  | [ ]            |
 | POST /api/v1/zones                       | [ ]  | [ ]            |

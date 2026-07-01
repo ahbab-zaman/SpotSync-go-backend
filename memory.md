@@ -4,36 +4,35 @@ Last updated: 2026-07-01
 
 ## What was built
 
-- **Feature 06 — Service — Auth**:
-  - `service/auth_service.go` — `AuthService` with `Register` and `Login`.
-  - `Register`: checks email uniqueness via `FindByEmail`, bcrypt hash (cost 10), `CreateUser`, returns `UserResponse`.
-  - `Login`: finds user by email, compares bcrypt hash, signs JWT (24h expiry) with `id` + `role` claims via `middleware.JWTClaims`, returns `LoginResponse`.
-  - Sentinel errors `ErrDuplicateEmail` and `ErrInvalidCredentials` defined in the `service` package.
-  - Compiles cleanly (`go build ./...` passes).
+- **Feature 07 — Handler — Auth**:
+  - `handler/auth_handler.go` — `AuthHandler` with `Register` (201) and `Login` (200), `handleServiceError` for sentinel-to-HTTP mapping, and response envelope helpers.
+  - `main.go` — Wired DI: `repository.NewUserRepository` → `service.NewAuthService` → `handler.NewAuthHandler`. Registered `POST /auth/register` and `POST /auth/login` routes. Replaced no-op validator with `go-playground/validator/v10`.
+  - `/contract` run: both endpoints verified against `api-reference.md`. Register passes all checks. Login passes with shape note (user object includes timestamps).
 
 ## Decisions made
 
-- `AuthService` imports `middleware.JWTClaims` for JWT signing — keeps claim structure consistent between signing and verification.
-- JWT expiration set to 24 hours.
-- Sentinel errors defined in `service` package for handler-layer HTTP status mapping.
+- `handleServiceError` pattern used for sentinel error mapping in handler layer.
+- `go-playground/validator/v10` installed and wired as Echo's validator (`c.Validate()`).
+- Login response user includes `created_at` / `updated_at` via `UserResponse` reuse — noted as shape deviation.
 
 ## Problems solved
 
-- None for this feature.
+- `go-playground/validator/v10` was not installed (Feature 01 missed it). Installed during Feature 07.
 
 ## Current state
 
 - Phase 1 (Foundation) complete.
-- Phase 2 (Auth Module): Features 04–06 done. Feature 07 remains.
+- Phase 2 (Auth Module) complete: Features 04–07 all done.
+- Phase 3 (Parking Zones Module): Features 08–11 remain.
 - Project compiles cleanly (`go build ./...` passes).
+- Auth endpoints verified against api-reference.md.
 
 ## Next session starts with
 
-**Feature 07 — Handler — Auth**: `handler/auth_handler.go`
-- `POST /api/v1/auth/register` — bind RegisterRequest, validate, call AuthService.Register, return 201 with UserResponse
-- `POST /api/v1/auth/login` — bind LoginRequest, validate, call AuthService.Login, return 200 with LoginResponse
-- Register routes on Echo in `main.go`
-- Run `/contract` after building to verify response shapes against api-reference.md.
+**Feature 08 — DTOs — Zones**: `dto/zone_dto.go`
+- `CreateZoneRequest` — name, type, total_capacity, price_per_hour with validator tags (required, oneof=general ev_charging covered, gt=0)
+- `UpdateZoneRequest` — same fields, all optional for partial updates
+- `ZoneResponse` — id, name, type, total_capacity, available_spots, price_per_hour, created_at
 
 ## Open questions
 

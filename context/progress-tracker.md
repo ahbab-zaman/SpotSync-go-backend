@@ -6,9 +6,9 @@ Update this file after every completed feature. Any AI agent reading this should
 
 ## Current Status
 
-**Phase:** Phase 2 — Auth Module  
-**Last completed:** 06 Service — Auth — Register (bcrypt hash + save), Login (hash verify + JWT sign)  
-**Next:** 07 Handler — Auth — POST /auth/register, POST /auth/login, routes registered
+**Phase:** Phase 3 — Parking Zones Module  
+**Last completed:** 07 Handler — Auth — POST /auth/register, POST /auth/login, routes registered + contract verified  
+**Next:** 08 DTOs — Zones — CreateZoneRequest, UpdateZoneRequest, ZoneResponse (with available_spots)
 
 ---
 
@@ -25,7 +25,7 @@ Update this file after every completed feature. Any AI agent reading this should
 - [x] 04 DTOs — Auth — RegisterRequest, LoginRequest, UserResponse, LoginResponse
 - [x] 05 Repository — User — CreateUser, FindByEmail, FindByID
 - [x] 06 Service — Auth — Register (bcrypt hash), Login (hash verify + JWT sign)
-- [ ] 07 Handler — Auth — POST /auth/register, POST /auth/login, routes registered
+- [x] 07 Handler — Auth — POST /auth/register, POST /auth/login, routes registered
 
 ### Phase 3 — Parking Zones Module
 
@@ -56,6 +56,7 @@ Update this file after every completed feature. Any AI agent reading this should
 - Feature 04 DTOs match api-reference.md spec exactly — all field names and validation tags align with what handlers will later produce. `LoginResponse` uses `UserResponse` for the user field (includes timestamps per build-plan.md, even though login response in api-reference.md omits them — adjust during handler build if needed)
 - Feature 05 `UserRepository` follows standard constructor pattern `NewUserRepository(db *gorm.DB)`. GORM `First` returns `ErrRecordNotFound` naturally — no sentinel wrapping needed; handler layer will map via `handleServiceError` later.
 - Feature 06 `AuthService` defines sentinel errors `ErrDuplicateEmail` and `ErrInvalidCredentials` in the `service` package for handler-layer mapping. JWT expiration set to 24 hours. Uses `middleware.JWTClaims` for signing to keep claim structure consistent with middleware verification.
+- Feature 07 `AuthHandler` uses `handleServiceError` to map sentinel errors to HTTP codes. `go-playground/validator/v10` installed and wired as Echo's validator. Login response includes timestamps in user object (reuses `UserResponse`) — noted in api-reference.md as shape deviation from spec.
 
 ---
 
@@ -63,4 +64,4 @@ Update this file after every completed feature. Any AI agent reading this should
 
 - Feature 02 verified by `go build ./...` — compiles cleanly. Cannot run migration verification without a live PostgreSQL database.
 - Feature 03 verified by `go build ./...` — compiles cleanly. `/protected-test` route added temporarily for manual JWT verification. Remove when real handlers are built.
-- `/contract` skipped for Features 02, 03, 04, 05, 06 — no API handler endpoints to verify against api-reference.md. Contract will run after Feature 07 (Handler — Auth).
+- `/contract` skipped for Features 02–06 (no handlers). Run for Feature 07 — both auth endpoints verified against api-reference.md. Register passes all checks. Login passes checks with shape note (timestamps in user object).
