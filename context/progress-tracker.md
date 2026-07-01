@@ -7,8 +7,8 @@ Update this file after every completed feature. Any AI agent reading this should
 ## Current Status
 
 **Phase:** Phase 3 — Parking Zones Module  
-**Last completed:** 09 Repository — Zone — FindAll, FindByID, Create, Update, Delete, CountActiveReservations  
-**Next:** 10 Service — Zone — GetAll (with available_spots), GetByID, Create, Update, Delete
+**Last completed:** 10 Service — Zone — GetAll (with available_spots), GetByID, Create, Update, Delete  
+**Next:** 11 Handler — Zone — all 5 zone endpoints, correct middleware chains registered
 
 ---
 
@@ -31,7 +31,7 @@ Update this file after every completed feature. Any AI agent reading this should
 
 - [x] 08 DTOs — Zones — CreateZoneRequest, UpdateZoneRequest, ZoneResponse (with available_spots)
 - [x] 09 Repository — Zone — FindAll, FindByID, Create, Update, Delete, CountActiveReservations
-- [ ] 10 Service — Zone — GetAll (with available_spots), GetByID, Create, Update, Delete
+- [x] 10 Service — Zone — GetAll (with available_spots), GetByID, Create, Update, Delete
 - [ ] 11 Handler — Zone — all 5 zone endpoints, correct middleware chains registered
 
 ### Phase 4 — Reservations Module
@@ -58,6 +58,7 @@ Update this file after every completed feature. Any AI agent reading this should
 - Feature 06 `AuthService` defines sentinel errors `ErrDuplicateEmail` and `ErrInvalidCredentials` in the `service` package for handler-layer mapping. JWT expiration set to 24 hours. Uses `middleware.JWTClaims` for signing to keep claim structure consistent with middleware verification.
 - Feature 07 `AuthHandler` uses `handleServiceError` to map sentinel errors to HTTP codes. `go-playground/validator/v10` installed and wired as Echo's validator. Login response includes timestamps in user object (reuses `UserResponse`) — noted in api-reference.md as shape deviation from spec.
 - Feature 08 `UpdateZoneRequest` uses pointer fields (`*string`, `*int`, `*float64`) to distinguish unset fields from zero values for partial updates. Validate tags use `omitempty` to skip validation when field is nil.
+- Feature 10 `ZoneService` defines `ErrZoneNotFound` sentinel in the `service` package. `GetByID` and `Update` map `gorm.ErrRecordNotFound` → `ErrZoneNotFound`. `available_spots` computed as `TotalCapacity - activeCount` via a `toZoneResponse` helper. `Create` returns `AvailableSpots = TotalCapacity` (no reservations exist yet).
 
 ---
 

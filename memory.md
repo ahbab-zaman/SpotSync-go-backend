@@ -4,19 +4,21 @@ Last updated: 2026-07-02
 
 ## What was built
 
-- **Feature 08 — DTOs — Zones**:
-  - `dto/zone_dto.go` — `CreateZoneRequest`, `UpdateZoneRequest` (pointer fields for partial updates), `ZoneResponse` (with `available_spots`)
-- **Feature 09 — Repository — Zone**:
-  - `repository/zone_repository.go` — `FindAll`, `FindByID`, `Create`, `Update`, `Delete`, `CountActiveReservations`
-  - Follows same constructor and pattern as `UserRepository`
-- Both compile cleanly (`go build ./...` passes)
-- Both reviewed: no issues found
+- **Feature 08 — DTOs — Zones**: `dto/zone_dto.go`
+- **Feature 09 — Repository — Zone**: `repository/zone_repository.go`
+- **Feature 10 — Service — Zone**: `service/zone_service.go`
+  - `GetAll` / `GetByID` — compute `available_spots` = `TotalCapacity - activeReservations`
+  - `Create` — returns `AvailableSpots = TotalCapacity`
+  - `Update` — partial update via pointer nil-checks
+  - `Delete` — verifies existence before deleting
+  - `ErrZoneNotFound` sentinel in service package
+- All compile cleanly (`go build ./...`)
 
 ## Decisions made
 
-- `UpdateZoneRequest` uses pointer fields with `omitempty` for partial updates
-- `ZoneResponse` excludes `updated_at` per build-plan (can add if handler needs it)
-- `ZoneRepository` follows identical pattern to `UserRepository` — consistent constructor, GORM-first-error return
+- `toZoneResponse` helper in service layer handles available_spots computation centrally
+- `ErrZoneNotFound` sentinel in service package, mapped from `gorm.ErrRecordNotFound`
+- `Create` returns `AvailableSpots = TotalCapacity` (no reservations exist yet for a new zone)
 
 ## Problems solved
 
@@ -26,17 +28,19 @@ Last updated: 2026-07-02
 
 - Phase 1 (Foundation) complete
 - Phase 2 (Auth Module) complete: Features 04–07 all done
-- Phase 3 (Parking Zones Module): Features 08 (DTOs) and 09 (Repository) done, Features 10–11 remain
+- Phase 3 (Parking Zones Module): Features 08–10 done, Feature 11 (Handler) remains
 - Project compiles cleanly
 
 ## Next session starts with
 
-**Feature 10 — Service — Zone**: `service/zone_service.go`
-- `GetAll() ([]dto.ZoneResponse, error)` — fetch all zones, calculate `available_spots` per zone via `CountActiveReservations`
-- `GetByID(id uint) (*dto.ZoneResponse, error)` — single zone with available_spots
-- `Create(req dto.CreateZoneRequest) (*dto.ZoneResponse, error)`
-- `Update(id uint, req dto.UpdateZoneRequest) (*dto.ZoneResponse, error)`
-- `Delete(id uint) error`
+**Feature 11 — Handler — Zone**: `handler/zone_handler.go`
+- `GET /api/v1/zones` — public, return all zones with `available_spots`
+- `GET /api/v1/zones/:id` — public, return single zone
+- `POST /api/v1/zones` — admin only, return 201
+- `PUT /api/v1/zones/:id` — admin only, return 200
+- `DELETE /api/v1/zones/:id` — admin only, return 200
+- Register all routes in `main.go` with correct middleware chains
+- Then run `/contract` to verify against api-reference.md
 
 ## Open questions
 
