@@ -6,9 +6,9 @@ Update this file after every completed feature. Any AI agent reading this should
 
 ## Current Status
 
-**Phase:** Not started  
-**Last completed:** —  
-**Next:** 01 Project Scaffolding
+**Phase:** Phase 1 — Foundation  
+**Last completed:** 02 Database Connection + Models  
+**Next:** 03 Middleware — JWT verification middleware, role-check middleware
 
 ---
 
@@ -16,8 +16,8 @@ Update this file after every completed feature. Any AI agent reading this should
 
 ### Phase 1 — Foundation
 
-- [ ] 01 Project Scaffolding — `go mod init`, install all dependencies, create folder structure, `.env`, `.gitignore`
-- [ ] 02 Database Connection + Models — User, ParkingZone, Reservation GORM structs, AutoMigrate confirmed
+- [x] 01 Project Scaffolding — `go mod init`, install all dependencies, create folder structure, `.env`, `.gitignore`
+- [x] 02 Database Connection + Models — User, ParkingZone, Reservation GORM structs, AutoMigrate confirmed
 - [ ] 03 Middleware — JWT verification middleware, role-check middleware
 
 ### Phase 2 — Auth Module
@@ -49,10 +49,12 @@ Update this file after every completed feature. Any AI agent reading this should
 
 ## Decisions Made During Build
 
-_Add decisions here as they are made during implementation._
+- Module path set to `github.com/yourusername/spotsync` (as specified in build-plan.md)
+- go.sum was initially empty after `go mod tidy` because no `.go` files existed; deps added to go.mod after writing models and main.go
 
 ---
 
 ## Notes
 
-_Add notes here as the build progresses — workarounds, patterns, anything that differs from the context files._
+- Feature 02 verified by `go build ./...` — compiles cleanly. Cannot run migration verification without a live PostgreSQL database.
+- No handlers built yet, so `/contract` was skipped (contract is for handler response shape verification).
