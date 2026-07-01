@@ -1,38 +1,38 @@
 # Memory — SpotSync Session 2026-07-01
 
-Last updated: 2026-07-01 18:15
+Last updated: 2026-07-01 18:30
 
 ## What was built
 
-- **Feature 01** — Project Scaffolding: `go mod init`, installed all 7 dependencies (Echo, GORM + pgx, JWT, bcrypt, validator, godotenv), created folder structure (`models/`, `dto/`, `repository/`, `service/`, `handler/`, `middleware/`), `.env.example`, `.gitignore`
-- **Feature 02** — Database Connection + Models:
-  - `models/user.go` — User GORM struct (id, name, email, password with `json:"-"`, role default `driver`, timestamps)
-  - `models/parking_zone.go` — ParkingZone GORM struct (id, name, type, total_capacity, price_per_hour, timestamps)
-  - `models/reservation.go` — Reservation GORM struct (id, user_id, zone_id, license_plate, status default `active`, timestamps, BelongsTo User and ParkingZone associations)
-  - `main.go` — Entry point with `godotenv.Load()`, `connectDB()` from `DATABASE_URL`, connection pool (25 max open, 10 idle, 5min lifetime), `AutoMigrate` on all 3 models, Echo setup with Logger/Recover/CORS, `customValidator` placeholder
+- **Feature 03 — Middleware**:
+  - `middleware/jwt_middleware.go` — `JWTMiddleware()` factory returning Echo middleware. Reads `Authorization: Bearer <token>`, parses JWT with `JWTClaims` (UserID uint + Role string), verifies with `JWT_SECRET` env var, injects `userID` and `role` into Echo context. Returns 401 on missing/invalid token.
+  - `middleware/role_middleware.go` — `RoleMiddleware(requiredRole string)` factory returning Echo middleware. Reads `role` from context, returns 403 if not matching.
+  - `middleware/jwt_middleware.go` also exports `JWTClaims` struct for use by future auth service.
+  - `main.go` — Added `/api/v1/protected-test` test route protected by `JWTMiddleware()` for manual verification. Echo's built-in middleware aliased as `echomw` to avoid package name collision.
 
 ## Decisions made
 
-- Module path: `github.com/yourusername/spotsync` (per build-plan.md)
-- No handler work done yet, so `/contract` was skipped (contract is for response shape verification only)
-- The `customValidator` in `main.go` is a stub returning nil — will be wired to go-playground/validator when DTOs are built in Feature 04
+- Echo's `github.com/labstack/echo/v4/middleware` imported as `echomw` alias to prevent name collision with custom `middleware` package.
+- `JWTClaims` placed in `middleware` package since that's where verification happens; auth service will import from here.
 
 ## Problems solved
 
-- `go mod tidy` stripped all dependencies when no `.go` files existed — resolved by writing model files and re-running `go get` + `go mod tidy`
+- `go build` failed initially because `github.com/golang-jwt/jwt/v5` was not in go.mod — fixed with `go get`.
+- Package name collision between `github.com/labstack/echo/v4/middleware` and local `middleware` package — resolved by aliasing Echo's middleware as `echomw`.
 
 ## Current state
 
-- Project scaffolds, builds and compiles cleanly (`go build ./...` passes)
-- Cannot run migration verification without a live PostgreSQL database
-- No middleware, no services, no handlers, no DTOs yet
+- All of Phase 1 (Foundation) is complete: scaffolding, models, database connection, middleware.
+- Project compiles cleanly (`go build ./...` passes).
+- No running database or server tests yet.
 
 ## Next session starts with
 
-**Feature 03 — Middleware**: JWT verification middleware and role-check middleware.
-- `middleware/jwt_middleware.go` — extract Bearer token, verify with `JWT_SECRET`, inject `userID` (uint) and `role` (string) into Echo context
-- `middleware/role_middleware.go` — factory that returns 403 if role doesn't match required role
-- Patterns already documented in `.agent/contract.md`
+**Feature 04 — DTOs for Auth**: `dto/auth_dto.go`
+- `RegisterRequest` — name, email, password, role with validator tags (required, email, oneof=driver admin)
+- `LoginRequest` — email, password with validator tags
+- `UserResponse` — id, name, email, role, created_at, updated_at (no password)
+- `LoginResponse` — token string, user UserResponse
 
 ## Open questions
 

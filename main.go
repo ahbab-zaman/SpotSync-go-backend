@@ -2,15 +2,17 @@ package main
 
 import (
 	"log"
+	"net/http"
 	"os"
 	"time"
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
+	echomw "github.com/labstack/echo/v4/middleware"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
+	"github.com/yourusername/spotsync/middleware"
 	"github.com/yourusername/spotsync/models"
 )
 
@@ -36,13 +38,28 @@ func main() {
 	e := echo.New()
 	e.Validator = &customValidator{}
 
-	e.Use(middleware.Logger())
-	e.Use(middleware.Recover())
-	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+	e.Use(echomw.Logger())
+	e.Use(echomw.Recover())
+	e.Use(echomw.CORSWithConfig(echomw.CORSConfig{
 		AllowOrigins: []string{"*"},
 		AllowMethods: []string{echo.GET, echo.POST, echo.PUT, echo.DELETE},
 		AllowHeaders: []string{echo.HeaderContentType, echo.HeaderAuthorization},
 	}))
+
+	api := e.Group("/api/v1")
+
+	api.GET("/protected-test", func(c echo.Context) error {
+		userID := c.Get("userID").(uint)
+		role := c.Get("role").(string)
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"success": true,
+			"message": "Authenticated",
+			"data": map[string]interface{}{
+				"user_id": userID,
+				"role":    role,
+			},
+		})
+	}, middleware.JWTMiddleware())
 
 	port := os.Getenv("PORT")
 	if port == "" {

@@ -7,8 +7,8 @@ Update this file after every completed feature. Any AI agent reading this should
 ## Current Status
 
 **Phase:** Phase 1 — Foundation  
-**Last completed:** 02 Database Connection + Models  
-**Next:** 03 Middleware — JWT verification middleware, role-check middleware
+**Last completed:** 03 Middleware — JWT verification middleware, role-check middleware  
+**Next:** 04 DTOs — Auth — RegisterRequest, LoginRequest, UserResponse, LoginResponse
 
 ---
 
@@ -18,7 +18,7 @@ Update this file after every completed feature. Any AI agent reading this should
 
 - [x] 01 Project Scaffolding — `go mod init`, install all dependencies, create folder structure, `.env`, `.gitignore`
 - [x] 02 Database Connection + Models — User, ParkingZone, Reservation GORM structs, AutoMigrate confirmed
-- [ ] 03 Middleware — JWT verification middleware, role-check middleware
+- [x] 03 Middleware — JWT verification middleware, role-check middleware
 
 ### Phase 2 — Auth Module
 
@@ -51,10 +51,13 @@ Update this file after every completed feature. Any AI agent reading this should
 
 - Module path set to `github.com/yourusername/spotsync` (as specified in build-plan.md)
 - go.sum was initially empty after `go mod tidy` because no `.go` files existed; deps added to go.mod after writing models and main.go
+- Echo's built-in middleware package aliased as `echomw` to avoid name collision with custom `middleware` package
+- `JWTClaims` struct defined in `middleware/jwt_middleware.go` so both middleware and future auth service can use it
 
 ---
 
 ## Notes
 
 - Feature 02 verified by `go build ./...` — compiles cleanly. Cannot run migration verification without a live PostgreSQL database.
-- No handlers built yet, so `/contract` was skipped (contract is for handler response shape verification).
+- Feature 03 verified by `go build ./...` — compiles cleanly. `/protected-test` route added temporarily for manual JWT verification. Remove when real handlers are built.
+- `/contract` skipped for Features 02 and 03 — no API handler endpoints to verify against api-reference.md.
