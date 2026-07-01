@@ -1,38 +1,42 @@
-# Memory — SpotSync Session 2026-07-01
+# Memory — SpotSync Session 2026-07-02
 
-Last updated: 2026-07-01
+Last updated: 2026-07-02
 
 ## What was built
 
-- **Feature 07 — Handler — Auth**:
-  - `handler/auth_handler.go` — `AuthHandler` with `Register` (201) and `Login` (200), `handleServiceError` for sentinel-to-HTTP mapping, and response envelope helpers.
-  - `main.go` — Wired DI: `repository.NewUserRepository` → `service.NewAuthService` → `handler.NewAuthHandler`. Registered `POST /auth/register` and `POST /auth/login` routes. Replaced no-op validator with `go-playground/validator/v10`.
-  - `/contract` run: both endpoints verified against `api-reference.md`. Register passes all checks. Login passes with shape note (user object includes timestamps).
+- **Feature 08 — DTOs — Zones**:
+  - `dto/zone_dto.go` — `CreateZoneRequest`, `UpdateZoneRequest` (pointer fields for partial updates), `ZoneResponse` (with `available_spots`)
+- **Feature 09 — Repository — Zone**:
+  - `repository/zone_repository.go` — `FindAll`, `FindByID`, `Create`, `Update`, `Delete`, `CountActiveReservations`
+  - Follows same constructor and pattern as `UserRepository`
+- Both compile cleanly (`go build ./...` passes)
+- Both reviewed: no issues found
 
 ## Decisions made
 
-- `handleServiceError` pattern used for sentinel error mapping in handler layer.
-- `go-playground/validator/v10` installed and wired as Echo's validator (`c.Validate()`).
-- Login response user includes `created_at` / `updated_at` via `UserResponse` reuse — noted as shape deviation.
+- `UpdateZoneRequest` uses pointer fields with `omitempty` for partial updates
+- `ZoneResponse` excludes `updated_at` per build-plan (can add if handler needs it)
+- `ZoneRepository` follows identical pattern to `UserRepository` — consistent constructor, GORM-first-error return
 
 ## Problems solved
 
-- `go-playground/validator/v10` was not installed (Feature 01 missed it). Installed during Feature 07.
+- None
 
 ## Current state
 
-- Phase 1 (Foundation) complete.
-- Phase 2 (Auth Module) complete: Features 04–07 all done.
-- Phase 3 (Parking Zones Module): Features 08–11 remain.
-- Project compiles cleanly (`go build ./...` passes).
-- Auth endpoints verified against api-reference.md.
+- Phase 1 (Foundation) complete
+- Phase 2 (Auth Module) complete: Features 04–07 all done
+- Phase 3 (Parking Zones Module): Features 08 (DTOs) and 09 (Repository) done, Features 10–11 remain
+- Project compiles cleanly
 
 ## Next session starts with
 
-**Feature 08 — DTOs — Zones**: `dto/zone_dto.go`
-- `CreateZoneRequest` — name, type, total_capacity, price_per_hour with validator tags (required, oneof=general ev_charging covered, gt=0)
-- `UpdateZoneRequest` — same fields, all optional for partial updates
-- `ZoneResponse` — id, name, type, total_capacity, available_spots, price_per_hour, created_at
+**Feature 10 — Service — Zone**: `service/zone_service.go`
+- `GetAll() ([]dto.ZoneResponse, error)` — fetch all zones, calculate `available_spots` per zone via `CountActiveReservations`
+- `GetByID(id uint) (*dto.ZoneResponse, error)` — single zone with available_spots
+- `Create(req dto.CreateZoneRequest) (*dto.ZoneResponse, error)`
+- `Update(id uint, req dto.UpdateZoneRequest) (*dto.ZoneResponse, error)`
+- `Delete(id uint) error`
 
 ## Open questions
 

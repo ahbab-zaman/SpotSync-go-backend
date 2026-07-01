@@ -7,8 +7,8 @@ Update this file after every completed feature. Any AI agent reading this should
 ## Current Status
 
 **Phase:** Phase 3 — Parking Zones Module  
-**Last completed:** 07 Handler — Auth — POST /auth/register, POST /auth/login, routes registered + contract verified  
-**Next:** 08 DTOs — Zones — CreateZoneRequest, UpdateZoneRequest, ZoneResponse (with available_spots)
+**Last completed:** 09 Repository — Zone — FindAll, FindByID, Create, Update, Delete, CountActiveReservations  
+**Next:** 10 Service — Zone — GetAll (with available_spots), GetByID, Create, Update, Delete
 
 ---
 
@@ -29,8 +29,8 @@ Update this file after every completed feature. Any AI agent reading this should
 
 ### Phase 3 — Parking Zones Module
 
-- [ ] 08 DTOs — Zones — CreateZoneRequest, UpdateZoneRequest, ZoneResponse (with available_spots)
-- [ ] 09 Repository — Zone — FindAll, FindByID, Create, Update, Delete, CountActiveReservations
+- [x] 08 DTOs — Zones — CreateZoneRequest, UpdateZoneRequest, ZoneResponse (with available_spots)
+- [x] 09 Repository — Zone — FindAll, FindByID, Create, Update, Delete, CountActiveReservations
 - [ ] 10 Service — Zone — GetAll (with available_spots), GetByID, Create, Update, Delete
 - [ ] 11 Handler — Zone — all 5 zone endpoints, correct middleware chains registered
 
@@ -57,6 +57,7 @@ Update this file after every completed feature. Any AI agent reading this should
 - Feature 05 `UserRepository` follows standard constructor pattern `NewUserRepository(db *gorm.DB)`. GORM `First` returns `ErrRecordNotFound` naturally — no sentinel wrapping needed; handler layer will map via `handleServiceError` later.
 - Feature 06 `AuthService` defines sentinel errors `ErrDuplicateEmail` and `ErrInvalidCredentials` in the `service` package for handler-layer mapping. JWT expiration set to 24 hours. Uses `middleware.JWTClaims` for signing to keep claim structure consistent with middleware verification.
 - Feature 07 `AuthHandler` uses `handleServiceError` to map sentinel errors to HTTP codes. `go-playground/validator/v10` installed and wired as Echo's validator. Login response includes timestamps in user object (reuses `UserResponse`) — noted in api-reference.md as shape deviation from spec.
+- Feature 08 `UpdateZoneRequest` uses pointer fields (`*string`, `*int`, `*float64`) to distinguish unset fields from zero values for partial updates. Validate tags use `omitempty` to skip validation when field is nil.
 
 ---
 
