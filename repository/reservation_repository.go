@@ -44,7 +44,7 @@ func (r *ReservationRepository) CreateWithLock(reservation *models.Reservation, 
 
 func (r *ReservationRepository) FindByUserID(userID uint) ([]models.Reservation, error) {
 	var reservations []models.Reservation
-	if err := r.db.Where("user_id = ?", userID).
+	if err := r.db.Where("user_id = ? AND status = ?", userID, "active").
 		Preload("Zone").
 		Find(&reservations).Error; err != nil {
 		return nil, err
@@ -61,7 +61,7 @@ func (r *ReservationRepository) FindByID(id uint) (*models.Reservation, error) {
 }
 
 func (r *ReservationRepository) UpdateStatus(id uint, status string) error {
-	result := r.db.Model(&models.Reservation{ID: id}).Update("status", status)
+	result := r.db.Model(&models.Reservation{}).Where("id = ?", id).Update("status", status)
 	if result.Error != nil {
 		return result.Error
 	}

@@ -62,6 +62,8 @@ func main() {
 	reservationSvc := service.NewReservationService(reservationRepo, zoneRepo)
 	reservationHnd := handler.NewReservationHandler(reservationSvc)
 
+	e.GET("/health", handler.HealthCheck)
+
 	api := e.Group("/api/v1")
 
 	api.POST("/auth/register", authHnd.Register)

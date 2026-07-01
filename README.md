@@ -2,7 +2,7 @@
 
 A RESTful parking reservation backend built with Go (Echo), GORM, and PostgreSQL. Provides JWT-authenticated endpoints for user registration, parking zone management, and concurrent-safe reservation booking.
 
-**Live URL:** `https://spotsync.onrender.com` (or your deployed URL)
+**Live URL:** `https://spotsync-reservation.onrender.com`
 
 ---
 
@@ -454,10 +454,30 @@ Authenticated. Cancel your own reservation.
 
 ---
 
+### Health
+
+#### GET /health
+
+Public. Returns the service health status.
+
+**Response — 200 OK:**
+```json
+{
+  "success": true,
+  "message": "Service is healthy",
+  "data": {
+    "status": "ok"
+  }
+}
+```
+
+---
+
 ### Endpoint Summary
 
 | Method | Path | Auth | Role |
 |--------|------|------|------|
+| GET | /health | Public | — |
 | POST | /api/v1/auth/register | Public | — |
 | POST | /api/v1/auth/login | Public | — |
 | GET | /api/v1/zones | Public | — |

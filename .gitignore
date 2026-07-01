@@ -13,3 +13,10 @@ tmp/
 .vscode/
 *.swp
 *.swo
+
+# Agent / context files
+.agent/
+context/
+AGENT.md
+POSTMAN.md
+memory.md
