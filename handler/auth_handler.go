@@ -58,8 +58,10 @@ func handleServiceError(c echo.Context, err error) error {
 		return c.JSON(http.StatusBadRequest, errorResponse("Email already registered"))
 	case errors.Is(err, service.ErrInvalidCredentials):
 		return c.JSON(http.StatusUnauthorized, errorResponse("Invalid credentials"))
-	case errors.Is(err, service.ErrZoneNotFound), errors.Is(err, service.ErrReservationNotFound):
+	case errors.Is(err, service.ErrZoneNotFound):
 		return c.JSON(http.StatusNotFound, errorResponse("Resource not found"))
+	case errors.Is(err, service.ErrReservationNotFound):
+		return c.JSON(http.StatusNotFound, errorResponse("Reservation not found"))
 	case errors.Is(err, service.ErrForbidden):
 		return c.JSON(http.StatusForbidden, errorResponse("Forbidden"))
 	case errors.Is(err, service.ErrZoneFull):

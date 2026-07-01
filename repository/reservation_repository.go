@@ -61,9 +61,14 @@ func (r *ReservationRepository) FindByID(id uint) (*models.Reservation, error) {
 }
 
 func (r *ReservationRepository) UpdateStatus(id uint, status string) error {
-	return r.db.Model(&models.Reservation{}).
-		Where("id = ?", id).
-		Update("status", status).Error
+	result := r.db.Model(&models.Reservation{ID: id}).Update("status", status)
+	if result.Error != nil {
+		return result.Error
+	}
+	if result.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
+	}
+	return nil
 }
 
 func (r *ReservationRepository) FindAll() ([]models.Reservation, error) {

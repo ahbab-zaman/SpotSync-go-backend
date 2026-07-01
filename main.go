@@ -11,6 +11,7 @@ import (
 	echomw "github.com/labstack/echo/v4/middleware"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 
 	"github.com/yourusername/spotsync/handler"
 	"github.com/yourusername/spotsync/middleware"
@@ -23,6 +24,7 @@ func main() {
 	godotenv.Load()
 
 	db := connectDB()
+	log.Println("Database connected successfully")
 
 	sqlDB, _ := db.DB()
 	sqlDB.SetMaxOpenConns(25)
@@ -36,7 +38,6 @@ func main() {
 	); err != nil {
 		log.Fatal("Failed to auto-migrate:", err)
 	}
-	log.Println("Database migration completed")
 
 	e := echo.New()
 	e.Validator = &customValidator{validator: validator.New()}
@@ -89,7 +90,9 @@ func connectDB() *gorm.DB {
 	if dsn == "" {
 		log.Fatal("DATABASE_URL environment variable is not set")
 	}
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Silent),
+	})
 	if err != nil {
 		log.Fatal("Failed to connect to database:", err)
 	}
