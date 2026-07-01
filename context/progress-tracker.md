@@ -6,9 +6,9 @@ Update this file after every completed feature. Any AI agent reading this should
 
 ## Current Status
 
-**Phase:** Phase 1 — Foundation  
-**Last completed:** 03 Middleware — JWT verification middleware, role-check middleware  
-**Next:** 04 DTOs — Auth — RegisterRequest, LoginRequest, UserResponse, LoginResponse
+**Phase:** Phase 2 — Auth Module  
+**Last completed:** 04 DTOs — Auth — RegisterRequest, LoginRequest, UserResponse, LoginResponse  
+**Next:** 05 Repository — User — CreateUser, FindByEmail, FindByID
 
 ---
 
@@ -22,7 +22,7 @@ Update this file after every completed feature. Any AI agent reading this should
 
 ### Phase 2 — Auth Module
 
-- [ ] 04 DTOs — Auth — RegisterRequest, LoginRequest, UserResponse, LoginResponse
+- [x] 04 DTOs — Auth — RegisterRequest, LoginRequest, UserResponse, LoginResponse
 - [ ] 05 Repository — User — CreateUser, FindByEmail, FindByID
 - [ ] 06 Service — Auth — Register (bcrypt hash), Login (hash verify + JWT sign)
 - [ ] 07 Handler — Auth — POST /auth/register, POST /auth/login, routes registered
@@ -53,6 +53,7 @@ Update this file after every completed feature. Any AI agent reading this should
 - go.sum was initially empty after `go mod tidy` because no `.go` files existed; deps added to go.mod after writing models and main.go
 - Echo's built-in middleware package aliased as `echomw` to avoid name collision with custom `middleware` package
 - `JWTClaims` struct defined in `middleware/jwt_middleware.go` so both middleware and future auth service can use it
+- Feature 04 DTOs match api-reference.md spec exactly — all field names and validation tags align with what handlers will later produce. `LoginResponse` uses `UserResponse` for the user field (includes timestamps per build-plan.md, even though login response in api-reference.md omits them — adjust during handler build if needed)
 
 ---
 
